@@ -44,6 +44,8 @@ dependencies:
   intl: ^0.17.0
   firebase_storage: ^11.0.10
   cloud_firestore: ^4.3.1
+  google_sign_in: ^5.4.4
+  percent_indicator: ^4.2.2
 
 
 dev_dependencies:
@@ -73,6 +75,7 @@ flutter:
     - assests/images/app_background.jpeg
     - assests/images/apps.png
     - assests/images/oops.png
+    - assests/images/google_logo.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

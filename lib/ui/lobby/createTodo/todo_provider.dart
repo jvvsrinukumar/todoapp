@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:todoapp/entites/todo_entity.dart';
 
 import 'package:todoapp/utlis/date_time_utlis.dart';
@@ -6,6 +7,8 @@ import 'package:todoapp/utlis/validators_utlis.dart';
 
 class TodoProvider extends ChangeNotifier {
   final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _taskNameController = TextEditingController();
+  final TextEditingController _taskDescController = TextEditingController();
 
   late DateTime startDate = DateTime.now();
   late DateTime fromDate = DateTime.now();
@@ -21,6 +24,21 @@ class TodoProvider extends ChangeNotifier {
   ValidationItem get date => _date;
 
   TextEditingController get dateController => _dateController;
+  TextEditingController get taskNameController => _taskNameController;
+  TextEditingController get taskDescController => _taskDescController;
+
+  void setEditValues(ToDo item) {
+    _dateController.text = item.date;
+    _taskNameController.text = item.taskName;
+    _taskDescController.text = item.taskDesc;
+    _date = ValidationItem(item.date, null);
+    _taskName = ValidationItem(item.taskName, null);
+    _taskDesc = ValidationItem(item.taskDesc, null);
+    // final currentDate = DateFormat.yMMMEd().parse(item.date);
+    //fromDate = currentDate;
+    //notifyListeners();
+  }
+
   bool get isValid {
     if (_taskDesc.value != null &&
         _taskName.value != null &&

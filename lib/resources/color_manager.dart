@@ -13,7 +13,7 @@ class ColorManager {
   static Color itemBackground = HexColor.fromHex("#DFE9EC"); //F2F2F2
 
 
-  static Color buttonColor = HexColor.fromHex("#51C0CE");
+  static Color buttonColor = HexColor.fromHex("#49BAEF");
   static Color textColor = HexColor.fromHex("#45403C");
   static Color backGround = HexColor.fromHex("#faf8f4");
   static Color darkPrimary = HexColor.fromHex("#d17d11");
@@ -23,6 +23,8 @@ class ColorManager {
   static Color error = HexColor.fromHex("#ffad3f");//HexColor.fromHex("#e61f34"); // red color
   static Color black = HexColor.fromHex("#000000");
   static Color green = Colors.green;
+
+  static Color circleColor = HexColor.fromHex("#E9E9E9");//E9E9E9
 
   static Color todoBackground = HexColor.fromHex("#46539E");
 }

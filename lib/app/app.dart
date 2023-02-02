@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:todoapp/resources/routes_manager.dart';
 import 'package:todoapp/resources/theme_manager.dart';
+import 'package:todoapp/utlis/navigation_service.dart';
 
 
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: RouteGenerator.getRoute,
         initialRoute: Routes.loginRoute,
         theme: getApplicationTheme(),
-       // navigatorKey: NavigationService().navigationKey,
+        navigatorKey: NavigationService().navigationKey,
       
     );
   }

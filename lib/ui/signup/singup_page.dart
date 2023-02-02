@@ -71,6 +71,10 @@ class _SignInPageState extends State<SignInPage> {
                           color: ColorManager.textColor),
                       decoration: InputDecoration(
                         hintText: "Email",
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white24), //<-- SEE HERE
+                          ),
                         hintStyle: const TextStyle(
                             color: Colors.grey,
                             fontSize: FontSizes.s14,
@@ -99,6 +103,10 @@ class _SignInPageState extends State<SignInPage> {
                           color: ColorManager.textColor),
                       decoration: InputDecoration(
                         hintText: "Password",
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white24), //<-- SEE HERE
+                          ),
                         //fillColor: Colors.red,
                         hintStyle: const TextStyle(
                             color: Colors.grey,

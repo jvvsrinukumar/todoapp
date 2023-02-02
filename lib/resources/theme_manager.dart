@@ -47,7 +47,7 @@ ThemeData getApplicationTheme() {
             textStyle: getSemiBoldStyle(
                 fontSize: FontSizes.s16, color: ColorManager.textColor),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSize.s12)))),
+                borderRadius: BorderRadius.circular(AppSize.s0)))),
 
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: ColorManager.buttonColor,
@@ -59,8 +59,8 @@ ThemeData getApplicationTheme() {
 
     // input decoration theme (text form field)
     inputDecorationTheme: InputDecorationTheme(
-      contentPadding: const EdgeInsets.fromLTRB(
-          AppPadding.p18, AppPadding.p16, AppPadding.p18, AppPadding.p16),
+      // contentPadding: const EdgeInsets.fromLTRB(
+      //     AppPadding.p18, AppPadding.p16, AppPadding.p18, AppPadding.p16),
       // hint style
       hintStyle: getRegularStyle(color: ColorManager.grey1),
 
@@ -69,28 +69,28 @@ ThemeData getApplicationTheme() {
       // error style
       errorStyle: getRegularStyle(color: ColorManager.error),
 
-      fillColor: ColorManager.white,
+      fillColor: ColorManager.todoBackground,
       filled: true,
       // enabled border
-      enabledBorder: OutlineInputBorder(
-          // contentPadding: EdgeInsets.fromLTRB(10.0, 15.0, 10.0, 15.0),
-          borderSide: BorderSide(color: ColorManager.grey),
-          borderRadius: const BorderRadius.all(Radius.circular(AppSize.s12))),
+        //  enabledBorder: const UnderlineInputBorder(
+        //                     borderSide: BorderSide(
+        //                         color: Colors.white24), //<-- SEE HERE
+        //                   ),
 
-      // focused border
-      focusedBorder: OutlineInputBorder(
-          //contentPadding: EdgeInsets.fromLTRB(10.0, 15.0, 10.0, 15.0),
-          borderSide: BorderSide(color: ColorManager.appBarTop),
-          borderRadius: const BorderRadius.all(Radius.circular(AppSize.s12))),
+      // // focused border
+      // focusedBorder: OutlineInputBorder(
+      //     //contentPadding: EdgeInsets.fromLTRB(10.0, 15.0, 10.0, 15.0),
+      //     borderSide: BorderSide(color: ColorManager.appBarTop),
+      //     borderRadius: const BorderRadius.all(Radius.circular(AppSize.s12))),
 
-      // error border
-      errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: ColorManager.error),
-          borderRadius: const BorderRadius.all(Radius.circular(AppSize.s12))),
-      // focused error border
-      focusedErrorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: ColorManager.error),
-          borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8))),
+      // // error border
+      // errorBorder: OutlineInputBorder(
+      //     borderSide: BorderSide(color: ColorManager.error),
+      //     borderRadius: const BorderRadius.all(Radius.circular(AppSize.s12))),
+      // // focused error border
+      // focusedErrorBorder: OutlineInputBorder(
+      //     borderSide: BorderSide(color: ColorManager.error),
+      //     borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8))),
     ),
   );
 }

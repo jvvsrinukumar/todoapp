@@ -1,5 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
+import 'package:todoapp/ui/lobby/todo_list.dart';
+import 'package:todoapp/ui/lobby/todo_list_provider.dart';
+import 'package:todoapp/utlis/navigation_service.dart';
 import 'package:todoapp/utlis/validators_utlis.dart';
 
 class LoginProvider extends ChangeNotifier {
@@ -25,7 +32,7 @@ class LoginProvider extends ChangeNotifier {
   void changeEmail(String email) {
     if (ValidationUtil.isValidEmailId(email)) {
       _email = ValidationItem(email, null);
-    } else if (email.isEmpty){
+    } else if (email.isEmpty) {
       _email = ValidationItem(null, "Email can't be empty");
     } else {
       _email = ValidationItem(null, "Invalid E-mail Address");
@@ -42,26 +49,55 @@ class LoginProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> checkUserAlreadyLoggedIn() async {
-    _isLoading = true;
-    if (auth.currentUser == null) {
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    } else {
-      final idTokenResult = await auth.currentUser!.getIdTokenResult(true);
-      if (idTokenResult.token != null) {
-        _isLoading = false;
-        //User? us = auth.currentUser;
-        //print(us);
-        notifyListeners();
-        return true;
-      } else {
-        _isLoading = false;
-        notifyListeners();
-        return false;
+  // Future<bool> checkUserAlreadyLoggedIn() async {
+  //   _isLoading = true;
+  //   if (auth.currentUser == null) {
+  //     _isLoading = false;
+  //     notifyListeners();
+  //     return false;
+  //   } else {
+  //     final idTokenResult = await auth.currentUser!.getIdTokenResult(true);
+  //     if (idTokenResult.token != null) {
+  //       _isLoading = false;
+  //       //User? us = auth.currentUser;
+  //       //print(us);
+  //       notifyListeners();
+  //       return true;
+  //     } else {
+  //       _isLoading = false;
+  //       notifyListeners();
+  //       return false;
+  //     }
+  //   }
+  // }
+
+
+   Future<void> signOut() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    try {
+      if (!kIsWeb) {
+        await googleSignIn.signOut();
       }
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      
     }
+  }
+  
+ Future<FirebaseApp> initializeFirebase(
+
+  ) async {
+    FirebaseApp firebaseApp = await Firebase.initializeApp();
+
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+       NavigationService().replaceScreen(ChangeNotifierProvider<LobbyProvider>(
+              create: (context) => LobbyProvider(), child: const LobbyPage()));
+    }
+
+    return firebaseApp;
   }
 
   Future<UserCredential?> loginWithEmailAndPassword() async {
@@ -70,7 +106,7 @@ class LoginProvider extends ChangeNotifier {
       UserCredential? userCredential = await auth.signInWithEmailAndPassword(
           email: email.value!, password: password.value!);
       _isLoading = false;
-     // print(userCredential);
+      // print(userCredential);
       return userCredential;
     } on FirebaseAuthException catch (e) {
       _isLoading = false;
@@ -88,4 +124,29 @@ class LoginProvider extends ChangeNotifier {
     return null;
   }
 
+  Future<User?> googleLogin() async {
+    _isLoading = true;
+    notifyListeners();
+
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    try {
+      var reslut = await googleSignIn.signIn();
+      if (reslut == null) {
+        _isLoading = false;
+        return null;
+      }
+
+      final userData = await reslut.authentication;
+      final credential = GoogleAuthProvider.credential(
+          accessToken: userData.accessToken, idToken: userData.idToken);
+      var finalResult =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      
+      _isLoading = false;
+      notifyListeners();
+      return finalResult.user;
+    } catch (error) {
+      print(error);
+    }
+  }
 }

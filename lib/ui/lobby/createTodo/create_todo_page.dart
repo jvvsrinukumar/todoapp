@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/entites/todo_entity.dart';
 import 'package:todoapp/resources/color_manager.dart';
@@ -10,7 +11,9 @@ import 'package:todoapp/ui/lobby/createTodo/todo_provider.dart';
 
 class CreateTodoPage extends StatefulWidget {
   final ToDo? todoTask;
-  const CreateTodoPage({super.key, required this.todoTask});
+  final String? taskID;
+  const CreateTodoPage(
+      {super.key, required this.todoTask, required this.taskID});
 
   @override
   State<CreateTodoPage> createState() => _CreateTodoPageState();
@@ -22,6 +25,10 @@ class _CreateTodoPageState extends State<CreateTodoPage> {
   @override
   void initState() {
     todoProvider = Provider.of<TodoProvider>(context, listen: false);
+    if (widget.todoTask != null) {
+      todoProvider.setEditValues(widget.todoTask!);
+    }
+
     super.initState();
   }
 
@@ -32,7 +39,7 @@ class _CreateTodoPageState extends State<CreateTodoPage> {
           elevation: 0.0,
           backgroundColor: ColorManager.todoBackground,
           title: Text(
-           widget.todoTask == null  ? "Add new thing" : "Edit Todo Item",
+            widget.todoTask == null ? "Add new thing" : "Edit Todo Item",
             style: getRegularStyle(
                 color: ColorManager.primary, fontSize: FontSizes.s17),
           ),
@@ -56,145 +63,194 @@ class _CreateTodoPageState extends State<CreateTodoPage> {
           ],
         ),
         body: Consumer<TodoProvider>(builder: (context, provider, child) {
-          return Container(
-            color: ColorManager.todoBackground,
-            child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                child: Column(
-                  children: [
-                    TextField(
-                      // controller: todo.nameController,
-                      keyboardType: TextInputType.emailAddress,
-                      obscureText: false,
-                      style: getSemiBoldStyle(
-                          fontSize: FontSizes.s16,
-                          color: ColorManager.textColor),
-                      decoration: InputDecoration(
-                        hintText: "Task Name",
-                        //fillColor: Colors.red,
-                        hintStyle: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: FontSizes.s14,
-                            fontFamily: FontConstants.fontFamily,
-                            fontWeight: FontWeightManager.regular),
-                        errorText: todoProvider.taskName.error,
-                        errorStyle: TextStyle(
-                            color: ColorManager.error,
-                            fontSize: FontSizes.s14,
-                            fontFamily: FontConstants.fontFamily,
-                            fontWeight: FontWeightManager.regular),
-                        //hintStyle: getSemiBoldStyle(fontSize:FontSize.s20,color: ColorManager.primary),
-                      ),
-                      onChanged: (val) {
-                        todoProvider.changeTaskName(val);
-                      },
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    TextField(
-                      // controller: todo.descriptionController,
-                      obscureText: false,
-                      textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.multiline,
-                      minLines: 2,
-                      maxLines: 5,
-                      style: getSemiBoldStyle(
-                          fontSize: FontSizes.s16,
-                          color: ColorManager.textColor),
-                      decoration: InputDecoration(
-                        hintText: "Description",
-                        //fillColor: Colors.red,
-                        hintStyle: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: FontSizes.s14,
-                            fontFamily: FontConstants.fontFamily,
-                            fontWeight: FontWeightManager.regular),
-                        errorText: todoProvider.taskDesc.error,
-                        errorStyle: TextStyle(
-                            color: ColorManager.error,
-                            fontSize: FontSizes.s14,
-                            fontFamily: FontConstants.fontFamily,
-                            fontWeight: FontWeightManager.regular),
-                        //hintStyle: getSemiBoldStyle(fontSize:FontSize.s20,color: ColorManager.primary),
-                      ),
-                      onChanged: (val) {
-                        todoProvider.changeTaskDesc(val);
-                      },
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    TextField(
-                      controller: todoProvider.dateController,
-                      readOnly: true,
-                      style: getSemiBoldStyle(
-                          fontSize: FontSizes.s16,
-                          color: ColorManager.textColor),
-                      decoration: InputDecoration(
-                        hintText: "Date",
-                        //fillColor: Colors.red,
-                        hintStyle: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: FontSizes.s14,
-                            fontFamily: FontConstants.fontFamily,
-                            fontWeight: FontWeightManager.regular),
-                        // errorText: snapshot.hasError
-                        //     ? snapshot.error.toString()
-                        //     : null,
-                        errorStyle: TextStyle(
-                            color: ColorManager.error,
-                            fontSize: FontSizes.s14,
-                            fontFamily: FontConstants.fontFamily,
-                            fontWeight: FontWeightManager.regular),
-                        //hintStyle: getSemiBoldStyle(fontSize:FontSize.s20,color: ColorManager.primary),
-                      ),
-                      onChanged: (String value) {
-                        todoProvider.changeDOB(value);
-                      },
-                      onTap: () {
-                        pickFromDateTime(pickDate: true);
-                      },
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    SizedBox(
-                      width: double.maxFinite,
-                      height: AppSize.s50,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorManager.buttonColor,
+          return SingleChildScrollView(
+            child: Container(
+              height: (MediaQuery.of(context).size.height),
+              color: ColorManager.todoBackground,
+              child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                  child: Column(
+                    children: [
+                      FittedBox(
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.grey,
+                          child: CircleAvatar(
+                            backgroundColor: ColorManager.todoBackground,
+                            radius: 29.5,
+                            child: Icon(
+                              Icons.brush,
+                              color: ColorManager.buttonColor,
+                              size: 25,
+                            ),
                           ),
-                          onPressed: () {
-                            if (todoProvider.isValid) {
-                              ToDo task = ToDo(
-                                  date: todoProvider.date.value!,
-                                  taskDesc: todoProvider.taskDesc.value!,
-                                  taskName: todoProvider.taskName.value!);
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      TextField(
+                        controller: todoProvider.taskNameController,
+                        keyboardType: TextInputType.emailAddress,
+                        obscureText: false,
+                        style: getSemiBoldStyle(
+                            fontSize: FontSizes.s16,
+                            color: ColorManager.primary),
+                        decoration: InputDecoration(
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white24), //<-- SEE HERE
+                          ),
 
-                              TodoService().add(task.toJson());
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: Text(
-                            "Add new thing".toUpperCase(),
-                            style: getSemiBoldStyle(
-                                color: ColorManager.primary,
-                                fontSize: FontSizes.s14),
-                          )),
-                    ),
-                  ],
-                )),
+                          hintText: "Task Name",
+
+                          hintStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: FontSizes.s14,
+                              fontFamily: FontConstants.fontFamily,
+                              fontWeight: FontWeightManager.regular),
+                          errorText: todoProvider.taskName.error,
+                          errorStyle: TextStyle(
+                              color: ColorManager.error,
+                              fontSize: FontSizes.s14,
+                              fontFamily: FontConstants.fontFamily,
+                              fontWeight: FontWeightManager.regular),
+                          //hintStyle: getSemiBoldStyle(fontSize:FontSize.s20,color: ColorManager.primary),
+                        ),
+                        onChanged: (val) {
+                          todoProvider.changeTaskName(val);
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextField(
+                        controller: todoProvider.taskDescController,
+                        obscureText: false,
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.multiline,
+                        minLines: 2,
+                        maxLines: 5,
+                        style: getSemiBoldStyle(
+                            fontSize: FontSizes.s16,
+                            color: ColorManager.primary),
+                        decoration: InputDecoration(
+                          hintText: "Description",
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white24), //<-- SEE HERE
+                          ),
+                          //fillColor: Colors.red,
+                          hintStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: FontSizes.s14,
+                              fontFamily: FontConstants.fontFamily,
+                              fontWeight: FontWeightManager.regular),
+                          errorText: todoProvider.taskDesc.error,
+                          errorStyle: TextStyle(
+                              color: ColorManager.error,
+                              fontSize: FontSizes.s14,
+                              fontFamily: FontConstants.fontFamily,
+                              fontWeight: FontWeightManager.regular),
+                          //hintStyle: getSemiBoldStyle(fontSize:FontSize.s20,color: ColorManager.primary),
+                        ),
+                        onChanged: (val) {
+                          todoProvider.changeTaskDesc(val);
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextField(
+                        controller: todoProvider.dateController,
+                        readOnly: true,
+                        style: getSemiBoldStyle(
+                            fontSize: FontSizes.s16,
+                            color: ColorManager.primary),
+                        decoration: InputDecoration(
+                          hintText: "Date",
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white24), //<-- SEE HERE
+                          ),
+                          //fillColor: Colors.red,
+                          hintStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: FontSizes.s14,
+                              fontFamily: FontConstants.fontFamily,
+                              fontWeight: FontWeightManager.regular),
+                          // errorText: snapshot.hasError
+                          //     ? snapshot.error.toString()
+                          //     : null,
+                          errorStyle: TextStyle(
+                              color: ColorManager.error,
+                              fontSize: FontSizes.s14,
+                              fontFamily: FontConstants.fontFamily,
+                              fontWeight: FontWeightManager.regular),
+                          //hintStyle: getSemiBoldStyle(fontSize:FontSize.s20,color: ColorManager.primary),
+                        ),
+                        onChanged: (String value) {
+                          todoProvider.changeDOB(value);
+                        },
+                        onTap: () {
+                          pickFromDateTime(pickDate: true);
+                        },
+                      ),
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      SizedBox(
+                        width: double.maxFinite,
+                        height: AppSize.s50,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorManager.buttonColor,
+                              shadowColor: Colors.black,
+                              elevation: 20,
+                            ),
+                            onPressed: () {
+                              // print(todoProvider.date.value!);
+                              if (todoProvider.isValid) {
+                                ToDo task = ToDo(
+                                    date: todoProvider.date.value!,
+                                    taskDesc: todoProvider.taskDesc.value!,
+                                    taskName: todoProvider.taskName.value!);
+                                if (widget.todoTask != null) {
+                                  TodoService().updateByID(
+                                      task.toJson(), widget.taskID!);
+                                  Navigator.pop(context);
+                                } else {
+                                  TodoService().add(task.toJson());
+                                  Navigator.pop(context);
+                                }
+                              }
+                            },
+                            child: Text(
+                              widget.todoTask != null
+                                  ? "Update".toUpperCase()
+                                  : "Add new thing".toUpperCase(),
+                              style: getSemiBoldStyle(
+                                  color: ColorManager.primary,
+                                  fontSize: FontSizes.s14),
+                            )),
+                      ),
+                    ],
+                  )),
+            ),
           );
         }));
   }
 
   Future pickFromDateTime({required bool pickDate}) async {
-    final date = await pickDateTime(todoProvider.toDate,
-        pickDate: pickDate, firstDate: todoProvider.fromDate);
+    final date = await pickDateTime(
+        widget.todoTask != null
+            ? DateFormat.yMMMEd().parse(widget.todoTask!.date)
+            : todoProvider.toDate,
+        pickDate: pickDate,
+        firstDate: todoProvider.fromDate);
     if (date == null) return;
-    if (date.isBefore(todoProvider.fromDate) || date.isAtSameMomentAs(todoProvider.fromDate)) {
+    if (date.isBefore(todoProvider.fromDate) ||
+        date.isAtSameMomentAs(todoProvider.fromDate)) {
       DateTime fromDate =
           DateTime(date.year, date.month, date.day, date.hour - 1, date.minute);
       //_createSurveyBlock.add(DateChangeEvent(true, fromDate));
